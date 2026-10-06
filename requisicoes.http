@@ -1,0 +1,165 @@
+@baseUrl = http://localhost:8081
+@pessoaId = 7
+@vagaId = 13
+
+### Boas-vindas — 200 com texto
+GET {{baseUrl}}/boas-vindas
+
+### Destaque — 200 com uma vaga
+GET {{baseUrl}}/destaque
+
+### Listar pessoas — 200, inicialmente 6 registros, sem senha
+GET {{baseUrl}}/pessoas
+
+### Pessoa existente — 200
+GET {{baseUrl}}/pessoas/1
+
+### Pessoa inexistente — 404 com Problem Details
+GET {{baseUrl}}/pessoas/999999
+
+### Criar pessoa — 201 + Location; copie o id retornado para pessoaId
+POST {{baseUrl}}/pessoas
+Content-Type: application/json
+
+{"nome":"Maria","email":"maria@exemplo.com","area":"Dados","senioridade":"Júnior"}
+
+### Atualizar pessoa — 200
+PUT {{baseUrl}}/pessoas/{{pessoaId}}
+Content-Type: application/json
+
+{"nome":"Maria Silva","email":"maria@exemplo.com","area":"Dados","senioridade":"Pleno"}
+
+### Corpo vazio — 400 com campos
+POST {{baseUrl}}/pessoas
+Content-Type: application/json
+
+{}
+
+### Email inválido — 400; repita com @exemplo.com e maria exemplo.com
+POST {{baseUrl}}/pessoas
+Content-Type: application/json
+
+{"nome":"Maria","email":"maria@","area":"Dados","senioridade":"Júnior"}
+
+### Validador customizado — 400
+POST {{baseUrl}}/pessoas
+Content-Type: application/json
+
+{"nome":"Maria","email":"maria@exemplo.com","area":"Dados","senioridade":"Mestre"}
+
+### PUT também valida — 400
+PUT {{baseUrl}}/pessoas/{{pessoaId}}
+Content-Type: application/json
+
+{}
+
+### Excluir pessoa criada — 204; repetir retorna 404
+DELETE {{baseUrl}}/pessoas/{{pessoaId}}
+
+### Listar empresas — 200, inicialmente 5
+GET {{baseUrl}}/empresas
+
+### Buscar empresa por slug — 200
+GET {{baseUrl}}/empresas/aurora-tech
+
+### Criar empresa — 201; repetir retorna 409
+POST {{baseUrl}}/empresas
+Content-Type: application/json
+
+{"nome":"Empresa Teste","slug":"empresa-teste","site":"https://exemplo.com","descricao":"Empresa para testes"}
+
+### Atualizar empresa — 200; o slug deve coincidir com a URL
+PUT {{baseUrl}}/empresas/empresa-teste
+Content-Type: application/json
+
+{"nome":"Empresa Atualizada","slug":"empresa-teste"}
+
+### Slug e site inválidos — 400
+POST {{baseUrl}}/empresas
+Content-Type: application/json
+
+{"nome":"Empresa Teste","slug":"Empresa Teste","site":"site-invalido"}
+
+### Slug repetido — 409
+POST {{baseUrl}}/empresas
+Content-Type: application/json
+
+{"nome":"Outra empresa","slug":"aurora-tech"}
+
+### Empresa vazia — 400
+POST {{baseUrl}}/empresas
+Content-Type: application/json
+
+{}
+
+### Excluir empresa de teste — 204
+DELETE {{baseUrl}}/empresas/empresa-teste
+
+### Listar vagas — 200, inicialmente 12; resposta não inclui descricao
+GET {{baseUrl}}/vagas
+
+### Vaga existente — 200
+GET {{baseUrl}}/vagas/1
+
+### Criar vaga — 201; copie o id retornado para vagaId
+POST {{baseUrl}}/vagas
+Content-Type: application/json
+
+{"titulo":"Teste JPA","descricao":"Primeira oportunidade","area":"Dados","senioridade":"Sênior","local":"Remoto","aceitaIniciante":false,"empresaSlug":"aurora-tech"}
+
+### Buscar vaga recém-criada — 200
+GET {{baseUrl}}/vagas/busca?area=Dados&senioridade=S%C3%AAnior&aceitaIniciante=false
+
+### Atualizar vaga — 200
+PUT {{baseUrl}}/vagas/{{vagaId}}
+Content-Type: application/json
+
+{"titulo":"Teste atualizado","area":"Dados","senioridade":"Júnior","aceitaIniciante":true,"empresaSlug":"aurora-tech"}
+
+### Vaga vazia — 400
+POST {{baseUrl}}/vagas
+Content-Type: application/json
+
+{}
+
+### Boolean obrigatório ausente — 400 com aceitaIniciante
+POST {{baseUrl}}/vagas
+Content-Type: application/json
+
+{"titulo":"Teste","area":"Dados","senioridade":"Júnior","empresaSlug":"aurora-tech"}
+
+### PUT vazio — 400
+PUT {{baseUrl}}/vagas/{{vagaId}}
+Content-Type: application/json
+
+{}
+
+### Estatísticas — 200; total 13 antes de excluir a vaga de teste
+GET {{baseUrl}}/estatisticas
+
+### Excluir vaga de teste — 204
+DELETE {{baseUrl}}/vagas/{{vagaId}}
+
+### Vaga excluída — 404
+GET {{baseUrl}}/vagas/{{vagaId}}
+
+### Busca sem resultados — 200 com []
+GET {{baseUrl}}/vagas/busca?area=Inexistente
+
+### Busca sem filtros — 200 com todas as vagas
+GET {{baseUrl}}/vagas/busca
+
+### Parâmetro longo — 400
+GET {{baseUrl}}/vagas/busca?area=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+
+### Tipo inválido — 400
+GET {{baseUrl}}/vagas/busca?aceitaIniciante=talvez
+
+### Id inválido — 400
+GET {{baseUrl}}/pessoas/abc
+
+### JSON malformado — 400
+POST {{baseUrl}}/pessoas
+Content-Type: application/json
+
+{

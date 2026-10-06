@@ -1,0 +1,27 @@
+@baseUrl = http://localhost:8081
+@id = 7
+
+### Execute duas vezes: 201 e 201, com ids diferentes.
+# Copie um dos ids retornados para a variável id acima.
+POST {{baseUrl}}/pessoas
+Content-Type: application/json
+
+{"nome":"Ana Teste","email":"ana.teste@exemplo.com","area":"Dados","senioridade":"Júnior"}
+
+### Execute duas vezes: 200 e 200. Os dados da pessoa ficam iguais.
+PUT {{baseUrl}}/pessoas/{{id}}
+Content-Type: application/json
+
+{"nome":"Ana Atualizada","email":"ana.teste@exemplo.com","area":"Dados","senioridade":"Pleno"}
+
+### Consulte após cada PUT: mesmo id e mesmos dados.
+GET {{baseUrl}}/pessoas/{{id}}
+
+### Execute duas vezes: 204 e 404. Em ambos os casos o registro fica ausente.
+DELETE {{baseUrl}}/pessoas/{{id}}
+
+### Depois de excluir: 404.
+GET {{baseUrl}}/pessoas/{{id}}
+
+# Idempotência é sobre o estado final, não sobre repetir o mesmo status HTTP.
+# O segundo registro criado pelo POST continua existindo; use seu id para excluí-lo.
