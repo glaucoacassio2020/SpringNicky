@@ -1,5 +1,11 @@
-package com.acassio.tech;
+package com.acassio.tech.service;
 
+import com.acassio.tech.model.Empresa;
+import com.acassio.tech.dto.EmpresaEntrada;
+import com.acassio.tech.repository.EmpresaRepository;
+import com.acassio.tech.dto.EmpresaResposta;
+import com.acassio.tech.exception.RecursoNaoEncontrado;
+import com.acassio.tech.exception.SlugDuplicado;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;

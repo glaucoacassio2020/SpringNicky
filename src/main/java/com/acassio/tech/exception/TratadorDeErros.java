@@ -1,4 +1,4 @@
-package com.acassio.tech;
+package com.acassio.tech.exception;
 
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;

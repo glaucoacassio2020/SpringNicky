@@ -1,4 +1,4 @@
-package com.acassio.tech;
+package com.acassio.tech.dto;
 
 // Senha nunca deve fazer parte da resposta da API.
 public record PessoaResposta(

@@ -1,4 +1,4 @@
-package com.acassio.tech;
+package com.acassio.tech.validation;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

@@ -1,5 +1,6 @@
-package com.acassio.tech;
+package com.acassio.tech.controller;
 
+import com.acassio.tech.service.EstatisticasService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 

@@ -1,5 +1,7 @@
-package com.acassio.tech;
+package com.acassio.tech.service;
 
+import com.acassio.tech.model.Vaga;
+import com.acassio.tech.repository.VagaRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;

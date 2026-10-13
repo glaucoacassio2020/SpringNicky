@@ -1,4 +1,4 @@
-package com.acassio.tech;
+package com.acassio.tech.dto;
 
 public record VagaResposta(
         Long id,

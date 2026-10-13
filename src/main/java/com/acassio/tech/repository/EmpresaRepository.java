@@ -1,5 +1,6 @@
-package com.acassio.tech;
+package com.acassio.tech.repository;
 
+import com.acassio.tech.model.Empresa;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 

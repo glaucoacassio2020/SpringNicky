@@ -1,5 +1,10 @@
-package com.acassio.tech;
+package com.acassio.tech.service;
 
+import com.acassio.tech.model.Pessoa;
+import com.acassio.tech.dto.PessoaEntrada;
+import com.acassio.tech.repository.PessoaRepository;
+import com.acassio.tech.dto.PessoaResposta;
+import com.acassio.tech.exception.RecursoNaoEncontrado;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;

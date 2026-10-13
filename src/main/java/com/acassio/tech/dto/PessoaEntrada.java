@@ -1,5 +1,6 @@
-package com.acassio.tech;
+package com.acassio.tech.dto;
 
+import com.acassio.tech.validation.SenioridadeValida;
 import jakarta.validation.constraints.*;
 
 public record PessoaEntrada(

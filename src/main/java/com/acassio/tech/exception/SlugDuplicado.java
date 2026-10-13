@@ -1,4 +1,4 @@
-package com.acassio.tech;
+package com.acassio.tech.exception;
 
 public class SlugDuplicado extends RuntimeException {
     public SlugDuplicado(String slug) {

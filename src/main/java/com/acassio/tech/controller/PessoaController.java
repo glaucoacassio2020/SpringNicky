@@ -1,5 +1,8 @@
-package com.acassio.tech;
+package com.acassio.tech.controller;
 
+import com.acassio.tech.dto.PessoaEntrada;
+import com.acassio.tech.dto.PessoaResposta;
+import com.acassio.tech.service.PessoaService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

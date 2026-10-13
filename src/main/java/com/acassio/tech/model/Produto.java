@@ -1,4 +1,4 @@
-package com.acassio.tech;
+package com.acassio.tech.model;
 
 public class Produto {
 

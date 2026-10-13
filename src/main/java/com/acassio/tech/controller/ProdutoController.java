@@ -1,8 +1,9 @@
-package com.acassio.tech;
+package com.acassio.tech.controller;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import com.acassio.tech.model.Produto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

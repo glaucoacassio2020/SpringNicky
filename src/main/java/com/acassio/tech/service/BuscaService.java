@@ -1,5 +1,7 @@
-package com.acassio.tech;
+package com.acassio.tech.service;
 
+import com.acassio.tech.repository.VagaRepository;
+import com.acassio.tech.dto.VagaResposta;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,7 +19,7 @@ public class BuscaService {
     // Boolean, e não boolean: só o objeto pode ser null, e null é
     // exatamente como "o filtro não foi enviado" chega aqui.
     public List<VagaResposta> buscar(String area, String senioridade,
-                             Boolean aceitaIniciante) {
+                                     Boolean aceitaIniciante) {
         return repository.findAll().stream()
                 .filter(v -> area == null
                         || v.getArea().equalsIgnoreCase(area))

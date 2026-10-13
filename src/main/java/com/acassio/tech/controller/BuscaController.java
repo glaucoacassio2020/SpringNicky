@@ -1,5 +1,7 @@
-package com.acassio.tech;
+package com.acassio.tech.controller;
 
+import com.acassio.tech.dto.VagaResposta;
+import com.acassio.tech.service.BuscaService;
 import jakarta.validation.constraints.Size;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,4 +1,4 @@
-package com.acassio.tech;
+package com.acassio.tech.dto;
 
 import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.URL;
