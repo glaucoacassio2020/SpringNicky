@@ -1,4 +1,61 @@
 package com.acassio.tech;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
+
+@Service
+@Transactional
 public class VagaService {
+
+    private final VagaRepository repository;
+
+    public VagaService(VagaRepository repository) {
+        this.repository = repository;
+    }
+
+    public List<VagaResposta> listar() {
+        return repository.findAll().stream().map(VagaService::paraResposta).toList();
+    }
+
+    public VagaResposta buscarPorId(Long id) {
+        return paraResposta(encontrar(id));
+    }
+
+    public VagaResposta destaque() {
+        return repository.findAll().stream()
+                .findFirst()
+                .map(VagaService::paraResposta)
+                .orElseThrow(() -> new RecursoNaoEncontrado("Não há vagas para destacar."));
+    }
+
+    public VagaResposta criar(VagaEntrada entrada) {
+        Vaga registro = new Vaga(entrada.titulo(), entrada.descricao(), entrada.area(), entrada.senioridade(), entrada.local(), entrada.aceitaIniciante(), entrada.empresaSlug());
+        return paraResposta(repository.save(registro));
+    }
+
+    public VagaResposta trocar(Long id, VagaEntrada entrada) {
+        Vaga registro = encontrar(id);
+        registro.setTitulo(entrada.titulo());
+        registro.setDescricao(entrada.descricao());
+        registro.setArea(entrada.area());
+        registro.setSenioridade(entrada.senioridade());
+        registro.setLocal(entrada.local());
+        registro.setAceitaIniciante(entrada.aceitaIniciante());
+        registro.setEmpresaSlug(entrada.empresaSlug());
+        return paraResposta(repository.save(registro));
+    }
+
+    public void apagar(Long id) {
+        repository.delete(encontrar(id));
+    }
+
+    private Vaga encontrar(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontrado("Vaga não encontrada: " + id));
+    }
+
+    public static VagaResposta paraResposta(Vaga registro) {
+        return new VagaResposta(registro.getId(), registro.getTitulo(), registro.getArea(), registro.getSenioridade(), registro.getLocal(), registro.isAceitaIniciante(), registro.getEmpresaSlug());
+    }
 }

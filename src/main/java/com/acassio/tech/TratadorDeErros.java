@@ -2,35 +2,38 @@ package com.acassio.tech;
 
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RestControllerAdvice
-public class TratadorDeErros extends ResponseEntityExceptionHandler {
+public class TratadorDeErros {
 
-    @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(
-            MethodArgumentNotValidException erro, HttpHeaders headers,
-            HttpStatusCode status, WebRequest request) {
+    // Trata os campos inválidos enviados no corpo do POST ou PUT.
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ProblemDetail camposInvalidos(MethodArgumentNotValidException erro) {
         Map<String, String> campos = new LinkedHashMap<>();
-        erro.getBindingResult().getFieldErrors()
-                .forEach(campo -> campos.put(campo.getField(), campo.getDefaultMessage()));
+        for (FieldError campo : erro.getBindingResult().getFieldErrors()) {
+            campos.put(campo.getField(), campo.getDefaultMessage());
+        }
         ProblemDetail problema = problema(HttpStatus.BAD_REQUEST,
                 "Um ou mais campos estão inválidos.");
         problema.setProperty("campos", campos);
-        return handleExceptionInternal(erro, problema, headers, status, request);
+        return problema;
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ProblemDetail parametroInvalido(ConstraintViolationException erro) {
         Map<String, String> campos = new LinkedHashMap<>();
-        erro.getConstraintViolations().forEach(violacao ->
-                campos.put(violacao.getPropertyPath().toString(), violacao.getMessage()));
+        for (var violacao : erro.getConstraintViolations()) {
+            campos.put(violacao.getPropertyPath().toString(), violacao.getMessage());
+        }
         ProblemDetail problema = problema(HttpStatus.BAD_REQUEST, "Parâmetros inválidos.");
         problema.setProperty("campos", campos);
         return problema;
@@ -58,17 +61,18 @@ public class TratadorDeErros extends ResponseEntityExceptionHandler {
         return problema(HttpStatus.CONFLICT, "Os dados conflitam com um registro existente.");
     }
 
-    // Também padroniza erros do Spring, como JSON malformado e tipo de parâmetro errado.
-    @Override
-    protected ResponseEntity<Object> createResponseEntity(
-            Object body, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        if (body instanceof ProblemDetail problema
-                && (problema.getProperties() == null || !problema.getProperties().containsKey("campos"))) {
-            problema.setProperty("campos", Map.of());
-        }
-        return super.createResponseEntity(body, headers, status, request);
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ProblemDetail jsonInvalido() {
+        return problema(HttpStatus.BAD_REQUEST, "O corpo da requisição deve conter um JSON válido.");
     }
 
+    // Exemplo: /pessoas/abc, quando o id precisa ser um número.
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ProblemDetail tipoInvalido(MethodArgumentTypeMismatchException erro) {
+        return problema(HttpStatus.BAD_REQUEST, "Valor inválido para o parâmetro " + erro.getName());
+    }
+
+    // Monta a resposta usada pelos métodos acima.
     private ProblemDetail problema(HttpStatus status, String detalhe) {
         ProblemDetail problema = ProblemDetail.forStatusAndDetail(status, detalhe);
         problema.setProperty("campos", Map.of());
