@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.annotation.DirtiesContext;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -13,13 +13,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Transactional
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class ApiTests {
     @Autowired
     private MockMvc mvc;
 
     @Test
-    void listaDadosDoBancoSemExporDescricaoOuSenha() throws Exception {
+    void listaDadosEmMemoriaSemExporDescricaoOuSenha() throws Exception {
         mvc.perform(get("/vagas"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(12)))
@@ -99,14 +99,14 @@ class ApiTests {
     @Test
     void novaVagaApareceNaBuscaENasEstatisticas() throws Exception {
         String endereco = mvc.perform(post("/vagas").contentType("application/json").content("""
-                {"titulo":"Teste JPA","descricao":"Descrição guardada no banco",
+                {"titulo":"Teste em memória","descricao":"Descrição guardada em memória",
                  "area":"Dados","senioridade":"Sênior","aceitaIniciante":false,"empresaSlug":"aurora-tech"}
                 """))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.descricao").doesNotExist())
                 .andReturn().getResponse().getHeader("Location");
         mvc.perform(get("/vagas/busca").param("area", "Dados").param("senioridade", "Sênior"))
-                .andExpect(jsonPath("$[0].titulo").value("Teste JPA"));
+                .andExpect(jsonPath("$[0].titulo").value("Teste em memória"));
         mvc.perform(get("/estatisticas")).andExpect(jsonPath("$.totalDeVagas").value(13));
         mvc.perform(delete(endereco)).andExpect(status().isNoContent());
         mvc.perform(get(endereco)).andExpect(status().isNotFound());

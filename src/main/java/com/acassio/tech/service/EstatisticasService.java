@@ -18,7 +18,7 @@ public class EstatisticasService {
     }
 
     public Map<String, Object> resumo() {
-        List<Vaga> todas = vagas.findAll();
+        List<Vaga> todas = vagas.todas();
 
         return Map.of(
                 "totalDeVagas", todas.size(),

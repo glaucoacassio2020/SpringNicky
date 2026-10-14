@@ -1,37 +1,30 @@
 package com.acassio.tech.model;
 
-import jakarta.persistence.*;
 
-@Entity
-@Table(name = "vagas")
 public class Vaga {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 120)
     private String titulo;
 
-    @Column(nullable = true, length = 2000)
     private String descricao;
 
-    @Column(nullable = false, length = 40)
     private String area;
 
-    @Column(nullable = false, length = 20)
     private String senioridade;
 
-    @Column(nullable = true, length = 120)
     private String local;
 
-    @Column(nullable = false)
     private boolean aceitaIniciante;
 
-    @Column(nullable = false, length = 100)
     private String empresaSlug;
 
     public Vaga() {
+    }
+
+    public Vaga(Long id, String titulo, String descricao, String area, String senioridade, String local, boolean aceitaIniciante, String empresaSlug) {
+        this(titulo, descricao, area, senioridade, local, aceitaIniciante, empresaSlug);
+        this.id = id;
     }
 
     public Vaga(String titulo, String descricao, String area, String senioridade, String local, boolean aceitaIniciante, String empresaSlug) {
@@ -42,6 +35,10 @@ public class Vaga {
         this.local = local;
         this.aceitaIniciante = aceitaIniciante;
         this.empresaSlug = empresaSlug;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Long getId() {

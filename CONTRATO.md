@@ -1,9 +1,9 @@
 # Contrato da API
 
-Escopo: vagas, empresas, pessoas e busca, até o conteúdo informado da aula 05.
+Escopo: vagas, empresas, pessoas e busca, com armazenamento em memória.
 POST e PUT usam os mesmos campos. O PUT substitui os dados; campos opcionais
-omitidos ficam nulos. Nenhuma entrada recebe id. Os ids são números gerados
-pelo H2. Campos desconhecidos não fazem parte do contrato e não são persistidos.
+omitidos ficam nulos. Nenhuma entrada recebe id. Os ids são números sequenciais gerados
+pelo repository. Campos desconhecidos não fazem parte do contrato e não são armazenados.
 
 ## Vaga
 
@@ -18,7 +18,7 @@ pelo H2. Campos desconhecidos não fazem parte do contrato e não são persistid
 | empresaSlug | Sim | Até 100 caracteres; letras minúsculas, números e hífen |
 
 A resposta contém id e todos os campos acima, exceto descricao.
-A descrição continua no banco. empresaSlug ainda é texto: o relacionamento
+A descrição continua no objeto guardado em memória. empresaSlug ainda é texto: o relacionamento
 entre entidades e a verificação de empresa existente ficam para a aula 06.
 
 ## Empresa
@@ -50,7 +50,7 @@ Um endereço bem formado não prova que a caixa de e-mail existe.
 
 Nesta etapa, e-mail repetido é permitido: dois POSTs criam duas pessoas.
 Quando o e-mail passar a identificar uma conta, a decisão será torná-lo único
-no banco e responder 409 nos conflitos.
+no armazenamento e responder 409 nos conflitos.
 
 ## Busca e erros
 

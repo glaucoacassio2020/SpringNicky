@@ -20,7 +20,7 @@ public class BuscaService {
     // exatamente como "o filtro não foi enviado" chega aqui.
     public List<VagaResposta> buscar(String area, String senioridade,
                                      Boolean aceitaIniciante) {
-        return repository.findAll().stream()
+        return repository.todas().stream()
                 .filter(v -> area == null
                         || v.getArea().equalsIgnoreCase(area))
                 .filter(v -> senioridade == null

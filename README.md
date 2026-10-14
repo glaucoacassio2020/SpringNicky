@@ -11,11 +11,11 @@ Projeto em Java 21, Spring Boot 4.1.1 e Maven.
 | 02 | Controller, service e repository; injeção pelo construtor em campos final |
 | 03 | CRUD, 200/201/204/404, Location, filtros e requisições .http |
 | 04 | DTOs com record, @Valid, validação de campos, validador customizado e Problem Details |
-| 05 | @Entity, @Id, @GeneratedValue, @Column, JpaRepository, H2 e ddl-auto |
+| 05 | Persistência em banco não implementada nesta versão, por opção |
 
-Os materiais das aulas 03 e 04 foram usados como referência. Os links da aula 05
-retornaram 404 na revisão de 06/10/2026; essa etapa segue a ementa fornecida.
-Isso não confirma requisitos adicionais de um desafio da aula 05 indisponível.
+Esta versão usa listas em memória, seguindo a abordagem do
+[repositório de referência](https://github.com/Um-Leque-de-Tecnologia/lequedevagas-api-spring).
+Não é necessário instalar ou configurar banco de dados.
 
 ## Como executar
 
@@ -46,18 +46,18 @@ Nesse caso, ajuste também a porta das requisições.
 
 O controller recebe a requisição e define o status HTTP.
 O service monta os objetos, aplica as regras e converte os DTOs.
-O repository usa o Spring Data JPA para consultar e gravar no banco.
+O repository guarda os objetos em uma ArrayList e permite listar, buscar, salvar e remover.
 
-- Vaga, Empresa e Pessoa: entidades do banco.
+- Vaga, Empresa e Pessoa: classes que representam os dados.
 - Entrada: campos recebidos e regras de validação.
 - Resposta: campos devolvidos pela API.
 - TratadorDeErros: tratamento centralizado das exceções.
-- data.sql: dados de exemplo carregados na inicialização.
+- Construtores dos repositories: carregam os dados de exemplo na inicialização.
 - CONTRATO.md: campos obrigatórios e decisões de validação.
 
 Produto e ProdutoController são o exemplo antigo da primeira aula, mantido
 separado do Leque de Vagas. A rota /produtos ainda usa lista em memória e
-não faz parte da migração das quatro frentes para DTO/JPA.
+não faz parte das quatro frentes do Leque de Vagas.
 
 ## Rotas
 
@@ -83,7 +83,7 @@ não faz parte da migração das quatro frentes para DTO/JPA.
 | GET | /vagas/busca?area=Dados&senioridade=Júnior | 200 ou 400 se parâmetro inválido |
 | GET | /estatisticas | 200 com contagens |
 
-Os ids de vagas e pessoas são números gerados pelo banco. Não envie id no
+Os ids de vagas e pessoas são números sequenciais gerados pelo repository. Não envie id no
 POST ou PUT. O slug da empresa é escolhido pelo cliente, por isso o Location
 de empresa usa o slug. No PUT, o recurso é identificado pela URL.
 
@@ -138,31 +138,14 @@ O arquivo `idempotencia.http` demonstra que repetir PUT mantém os mesmos
 dados e repetir DELETE mantém o recurso ausente, mesmo que o segundo DELETE
 retorne 404. Repetir POST de pessoa cria outro registro.
 
-## Banco H2
+## Armazenamento em memória
 
-Com a aplicação em execução, abra http://localhost:8081/h2-console e preencha:
+Cada repository mantém sua própria lista de objetos. Os dados de exemplo
+são adicionados no construtor: 12 vagas, 5 empresas e 6 pessoas.
+Um contador gera o id de cada cadastro novo.
 
-- Driver: org.h2.Driver
-- JDBC URL: jdbc:h2:mem:tech
-- Usuário: sa
-- Senha: deixe em branco
-
-Execute:
-
-```sql
-SELECT * FROM vagas;
-SELECT * FROM empresas;
-SELECT * FROM pessoas;
-```
-
-Crie uma pessoa pela API e repita o SELECT para conferir a gravação.
-O H2 está em memória: ao reiniciar, os cadastros novos desaparecem e data.sql
-recarrega os exemplos. O console deve usar a mesma URL da configuração.
-
-`ddl-auto=create-drop` cria as tabelas ao iniciar e as remove ao encerrar.
-É adequado a este exercício. `update` tenta ajustar o esquema, `validate`
-somente verifica e `none` não gerencia o esquema. Em produção, prefira
-migrações controladas com validate/none e desative o console H2.
+As mudanças duram somente enquanto a aplicação está aberta. Ao reiniciar,
+as listas voltam aos exemplos iniciais. Não há banco, console ou arquivo SQL.
 
 ## Testes automatizados
 
@@ -183,7 +166,7 @@ Preencha os nomes reais antes da entrega:
 | 1 — Vaga | A preencher | CRUD, geração de id e DTO de resposta sem descrição |
 | 2 — Empresa | A preencher | Slug escolhido pelo cliente e conflito 409 |
 | 3 — Pessoa | A preencher | E-mail, DTO sem senha e idempotência |
-| 4 — Busca e números | A preencher | Filtros opcionais e consultas ao mesmo banco |
+| 4 — Busca e números | A preencher | Filtros opcionais e consultas à mesma lista de vagas |
 
 As regras estão no [CONTRATO.md](CONTRATO.md). As rotas de pessoas permanecem
 públicas e não existe senha no modelo. Relacionamentos, candidaturas,

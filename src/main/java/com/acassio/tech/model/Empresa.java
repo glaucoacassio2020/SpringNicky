@@ -1,28 +1,24 @@
 package com.acassio.tech.model;
 
-import jakarta.persistence.*;
 
-@Entity
-@Table(name = "empresas")
 public class Empresa {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 120)
     private String nome;
 
-    @Column(nullable = false, length = 100, unique = true)
     private String slug;
 
-    @Column(nullable = true, length = 255)
     private String site;
 
-    @Column(nullable = true, length = 2000)
     private String descricao;
 
     public Empresa() {
+    }
+
+    public Empresa(Long id, String nome, String slug, String site, String descricao) {
+        this(nome, slug, site, descricao);
+        this.id = id;
     }
 
     public Empresa(String nome, String slug, String site, String descricao) {
@@ -30,6 +26,10 @@ public class Empresa {
         this.slug = slug;
         this.site = site;
         this.descricao = descricao;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Long getId() {

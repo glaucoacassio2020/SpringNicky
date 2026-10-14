@@ -105,7 +105,7 @@ GET {{baseUrl}}/vagas/1
 POST {{baseUrl}}/vagas
 Content-Type: application/json
 
-{"titulo":"Teste JPA","descricao":"Primeira oportunidade","area":"Dados","senioridade":"Sênior","local":"Remoto","aceitaIniciante":false,"empresaSlug":"aurora-tech"}
+{"titulo":"Teste em memória","descricao":"Primeira oportunidade","area":"Dados","senioridade":"Sênior","local":"Remoto","aceitaIniciante":false,"empresaSlug":"aurora-tech"}
 
 ### Buscar vaga recém-criada — 200
 GET {{baseUrl}}/vagas/busca?area=Dados&senioridade=S%C3%AAnior&aceitaIniciante=false

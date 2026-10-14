@@ -7,21 +7,20 @@ import com.acassio.tech.dto.EmpresaResposta;
 import com.acassio.tech.exception.RecursoNaoEncontrado;
 import com.acassio.tech.exception.SlugDuplicado;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-@Transactional
 public class EmpresaService {
 
     private final EmpresaRepository repository;
+    private long proximoId = 6;
 
     public EmpresaService(EmpresaRepository repository) {
         this.repository = repository;
     }
 
     public List<EmpresaResposta> listar() {
-        return repository.findAll().stream().map(EmpresaService::paraResposta).toList();
+        return repository.todas().stream().map(EmpresaService::paraResposta).toList();
     }
 
     public EmpresaResposta buscarPorSlug(String slug) {
@@ -29,11 +28,12 @@ public class EmpresaService {
     }
 
     public EmpresaResposta criar(EmpresaEntrada entrada) {
-        if (repository.existsBySlug(entrada.slug())) {
+        if (repository.porSlug(entrada.slug()).isPresent()) {
             throw new SlugDuplicado(entrada.slug());
         }
         Empresa registro = new Empresa(entrada.nome(), entrada.slug(), entrada.site(), entrada.descricao());
-        return paraResposta(repository.save(registro));
+        registro.setId(proximoId++);
+        return paraResposta(repository.salvar(registro));
     }
 
     public EmpresaResposta trocar(String slug, EmpresaEntrada entrada) {
@@ -45,15 +45,18 @@ public class EmpresaService {
         registro.setSlug(entrada.slug());
         registro.setSite(entrada.site());
         registro.setDescricao(entrada.descricao());
-        return paraResposta(repository.save(registro));
+        return paraResposta(repository.trocar(slug, registro)
+                .orElseThrow(() -> new RecursoNaoEncontrado("Empresa não encontrada: " + slug)));
     }
 
     public void apagar(String slug) {
-        repository.delete(encontrar(slug));
+        if (!repository.remover(slug)) {
+            throw new RecursoNaoEncontrado("Empresa não encontrada: " + slug);
+        }
     }
 
     private Empresa encontrar(String slug) {
-        return repository.findBySlug(slug)
+        return repository.porSlug(slug)
                 .orElseThrow(() -> new RecursoNaoEncontrado("Empresa não encontrada: " + slug));
     }
 

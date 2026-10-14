@@ -6,21 +6,20 @@ import com.acassio.tech.repository.PessoaRepository;
 import com.acassio.tech.dto.PessoaResposta;
 import com.acassio.tech.exception.RecursoNaoEncontrado;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-@Transactional
 public class PessoaService {
 
     private final PessoaRepository repository;
+    private long proximoId = 7;
 
     public PessoaService(PessoaRepository repository) {
         this.repository = repository;
     }
 
     public List<PessoaResposta> listar() {
-        return repository.findAll().stream().map(PessoaService::paraResposta).toList();
+        return repository.todas().stream().map(PessoaService::paraResposta).toList();
     }
 
     public PessoaResposta buscarPorId(Long id) {
@@ -29,7 +28,8 @@ public class PessoaService {
 
     public PessoaResposta criar(PessoaEntrada entrada) {
         Pessoa registro = new Pessoa(entrada.nome(), entrada.email(), entrada.area(), entrada.senioridade());
-        return paraResposta(repository.save(registro));
+        registro.setId(proximoId++);
+        return paraResposta(repository.salvar(registro));
     }
 
     public PessoaResposta trocar(Long id, PessoaEntrada entrada) {
@@ -38,15 +38,18 @@ public class PessoaService {
         registro.setEmail(entrada.email());
         registro.setArea(entrada.area());
         registro.setSenioridade(entrada.senioridade());
-        return paraResposta(repository.save(registro));
+        return paraResposta(repository.trocar(id, registro)
+                .orElseThrow(() -> new RecursoNaoEncontrado("Pessoa não encontrada: " + id)));
     }
 
     public void apagar(Long id) {
-        repository.delete(encontrar(id));
+        if (!repository.remover(id)) {
+            throw new RecursoNaoEncontrado("Pessoa não encontrada: " + id);
+        }
     }
 
     private Pessoa encontrar(Long id) {
-        return repository.findById(id)
+        return repository.porId(id)
                 .orElseThrow(() -> new RecursoNaoEncontrado("Pessoa não encontrada: " + id));
     }
 

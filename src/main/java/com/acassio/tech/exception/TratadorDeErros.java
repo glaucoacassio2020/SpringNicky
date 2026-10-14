@@ -1,7 +1,6 @@
 package com.acassio.tech.exception;
 
 import jakarta.validation.ConstraintViolationException;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -54,11 +53,6 @@ public class TratadorDeErros {
     @ExceptionHandler(IllegalArgumentException.class)
     public ProblemDetail dadoInvalido(IllegalArgumentException erro) {
         return problema(HttpStatus.BAD_REQUEST, erro.getMessage());
-    }
-
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public ProblemDetail conflitoNoBanco(DataIntegrityViolationException erro) {
-        return problema(HttpStatus.CONFLICT, "Os dados conflitam com um registro existente.");
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
